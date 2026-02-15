@@ -41,7 +41,8 @@ jobs:
 
       - name: Terraform Destroy
         run: terraform destroy -auto-approve
-
+      - name: Terraform import bucket
+        run: terraform import aws_s3_bucket.site luffiii-site-s3
       - name: Terraform Validate
         run: terraform validate
 
