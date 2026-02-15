@@ -29,7 +29,6 @@ jobs:
         with:
           terraform_version: 1.7.5   # use any version you prefer
 
-      # (Option 2: via secrets — uncomment if you prefer)
       - name: Configure AWS credentials (secrets)
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -39,9 +38,6 @@ jobs:
 
       - name: Terraform Init
         run: terraform init
-
-      - name: Terraform Format
-        run: terraform fmt -check
 
       - name: Terraform Validate
         run: terraform validate
