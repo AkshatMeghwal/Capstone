@@ -1,0 +1,54 @@
+name: Terraform AWS Deployment
+
+on:
+  push:
+    branches:
+      - project2
+  pull_request:
+
+permissions:
+  contents: read
+  id-token: write  # required for AWS OIDC auth
+  pull-requests: write
+
+jobs:
+  terraform:
+    name: Run Terraform
+    runs-on: ubuntu-latest
+
+    env:
+      TF_LOG: INFO
+      TF_IN_AUTOMATION: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.7.5   # use any version you prefer
+
+      # (Option 2: via secrets — uncomment if you prefer)
+      - name: Configure AWS credentials (secrets)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Format
+        run: terraform fmt -check
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan
+
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/project2'
+        run: terraform apply -auto-approve tfplan
