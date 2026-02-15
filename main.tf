@@ -11,7 +11,7 @@ provider "aws" {
 resource "aws_s3_bucket" "site" {
 
   bucket = "luffiii-site-s3" # must be globally unique
-
+  force_destroy = true
 
 
   website {
